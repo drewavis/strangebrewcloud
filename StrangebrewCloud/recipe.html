@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block navigation %}
+<p><a href="/download/{{ recipe.name|escape }}">Download this recipe</a>  </p>
+{% ifequal user recipe.author %} 
+<p><a href="/delete/{{ recipe.name|escape }}">Delete this recipe</a>  </p>
+{% endifequal %}
+<p><a href="/">Home</a></p>
+
+{% endblock %}
+
+{% block content %}
+	
+ 	<p>Name: {{ recipe.name|escape }} </p>
+ 	<p>Style: {{ recipe.style|escape }}</p>			
+	<p>Brewer: {{ recipe.brewer|escape }}</p>
+	<p>Size: {{ data.size }}</p>
+	<p>OG: {{ data.og }}</p>
+	<p>FG: {{ data.fg }}</p>
+	<p>Comments: {{ recipe.comments|escape }}</p>
+	<p>Malts:</p>
+	<ul>
+	   		{% for m in data.malts %}
+	   		<li>{{ m }}</li>
+	   		{% endfor %}
+	</ul>
+	<p>Hops:</p>
+	<ul>  		
+	   		{% for h in data.hops %}
+	   		<li>{{ h }}</li>
+	   		{% endfor %}
+	</ul>
+	
+	<p>Version: {{ recipe.version|escape }}<br>
+	<b>Note:</b> Recipes are not backwards-compatible.  Recipes from 2.x will
+	not open in StrangeBrew 1.8.</p>
+	<p>Submitted by: {{ recipe.author|escape }} on {{ recipe.date|escape }}</p>
+	
+ {% endblock %}

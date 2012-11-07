@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+   <head>
+      <link href="/stylesheets/css/my_layout.css" rel="stylesheet" type="text/css" />
+      <!--[if lte IE 7]>
+<link href="css/patches/patch_my_layout.css" rel="stylesheet" type="text/css" />
+<![endif]-->
+      <title>StrangeBrew Recipe Archive</title>
+   </head>
+   <body>
+      <div class="page_margins">
+         <div id="page">
+            <div id="header">
+               <div id="topnav">        
+                  
+                  {% if user %} 
+                  <p>Logged in as: {{ user.nickname }} (<a
+                     href="{{ url }}">{{ url_linktext }}</a>)</p> 
+                  {% else %} 
+                     <p><a href="{{ url }}">{{ url_linktext }}</a></p> 
+                  {% endif %} 
+               </div>
+               <h1><a href="/">StrangeBrew Recipe Archive!</a></h1>
+            </div>
+
+            <div id="nav">
+               <!-- skiplink anchor: navigation -->
+               <a id="navigation" name="navigation" />
+               <div class="hlist">
+                  <!-- main navigation: horizontal list -->
+                  <ul> 
+                     
+                     <li><a href="#"><strong></strong></a>
+                     </li>
+                     <li>
+                        <a href="http://strangebrew.ca">StrangeBrew Home</a>
+                     </li>
+                     <li>
+                        <a href="http://sourceforge.net/projects/strangebrew">StrangeBrew Java</a>
+                     </li>
+                  </ul>
+               </div>
+            </div>
+
+            <div id="main">
+               <div id="col1"
+                  >
+                  {% block navigation %}
+
+                  {% endblock %}
+               </div>
+
+               <div id="col3">
+                  <div id="col3_content" class="clearfix"> 
+                     {% block content %}
+                    
+                     {% endblock %}
+                  </div>
+
+
+
+               </div>
+
+
+            </div>
+            <div id="footer">
+               <script type="text/javascript"><!--
+                  google_ad_client = "pub-6687953597078382";		
+                  google_ad_slot = "8057994277";
+                  google_ad_width = 728;
+                  google_ad_height = 90;
+                  //--> 
+               </script> 
+               <script type="text/javascript"
+                  
+                  src="http://pagead2.googlesyndication.com/pagead/show_ads.js"> 
+               </script> 
+               
+
+               <p class="quiet">
+                  <small>(c)2009 Drew Avis</small>
+               </p>
+            </div>
+         </div>
+      </div>
+
+   </body>
+</html>
