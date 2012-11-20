@@ -1,23 +1,88 @@
 import webapp2
 from xml.dom import minidom
 from sbrecipe import SBRecipe
+import cgi
 
+ 
+def unique_result(array, attr):
+    unique_results = []
+    for obj in array:
+        if getattr(obj, attr) not in unique_results:
+            unique_results.append(getattr(obj, attr))
+    return unique_results 
+
+def xml_recipe_list(array):
+    resp='<?xml version="1.0"?><recipes>'
+    for recipe in array:
+        resp += "<recipe id='" +str(recipe.key().id()) + "' name='" + cgi.escape(recipe.name) \
+            + "' style='" + cgi.escape(recipe.style) + "' brewer='" + cgi.escape(recipe.brewer) + "' />"
+    resp += '</recipes>\n'  
+    return resp
    
 class MainPage(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'text/plain'
         self.response.write('Hello, webapp2 World!')
         
+        
+class StyleHandler(webapp2.RequestHandler):
+    def get(self,name=None):
+        # if no style defined, return all styles
+        if name is None or name == '' or name == 'all':
+            resp='<?xml version="1.0"?><styles>'
+            recipes_query = SBRecipe.all()
+            styles = unique_result(recipes_query, 'style')
+            for style in styles:
+                resp+= "<style>" + cgi.escape(style) + "</style>"                
+            resp+='</styles>\n'
+            self.response.headers['Content-Type'] = 'application/xml'   
+            self.response.write(resp)
+            return  
+        
+        else:
+            # try to get ID
+            try:
+                recipes_query = SBRecipe.all().filter('style =', name)
+                resp = xml_recipe_list(recipes_query)                
+                self.response.headers['Content-Type'] = 'application/xml'   
+                self.response.write(resp)
+                return                
+               
+            except:
+                self.error(400)
+                self.response.out.write('no records.')      
+                return
+
+class BrewerHandler(webapp2.RequestHandler):
+    def get(self,name=None):
+        # if no style defined, return all styles
+        if name is None or name == '' or name == 'all':
+            self.error(400)
+            self.response.out.write('specify brewer.')      
+            return  
+        
+        else:
+            # try to get ID
+            try:
+                recipes_query = SBRecipe.all().filter('brewer =', name)
+                resp = xml_recipe_list(recipes_query)                
+                self.response.headers['Content-Type'] = 'application/xml'   
+                self.response.write(resp)
+                return 
+               
+               
+            except:
+                self.error(400)
+                self.response.out.write('no records.')      
+                return        
+        
 class RecipeHandler(webapp2.RequestHandler):
     def get(self,name=None):        
+      
         # return all recipes w/ id's:
         if name is None or name == '' or name == 'all':
-            resp='<xml>'
             recipes_query = SBRecipe.all()
-            for recipe in recipes_query:
-                resp += '<recipe id=\''+str(recipe.key().id()) + '\' name=\'' + recipe.name \
-                    + '\' style=\'' + recipe.style + '\' />'
-            resp += '</xml>'  
+            resp = xml_recipe_list(recipes_query)           
             
             self.response.headers['Content-Type'] = 'application/xml'   
             self.response.write(resp)
@@ -77,4 +142,8 @@ class RecipeHandler(webapp2.RequestHandler):
         
 
 app = webapp2.WSGIApplication([('/', MainPage),
-                               (r'/recipes/(.*)', RecipeHandler)], debug=True)
+                               (r'/recipes/(.*)', RecipeHandler),
+                               (r'/styles/(.*)', StyleHandler),
+                               (r'/brewer/(.*)', BrewerHandler)                         
+                               
+                               ], debug=True)

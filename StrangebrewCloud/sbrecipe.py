@@ -3,7 +3,6 @@ from xml.dom import minidom
 from google.appengine.ext import db
 
 class SBRecipe(db.Model):
-    author = db.UserProperty()
     comments = db.StringProperty(multiline=True)
     date = db.DateTimeProperty(auto_now_add=True)
     xml = db.TextProperty()
