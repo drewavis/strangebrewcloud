@@ -57,8 +57,14 @@ class BrewerHandler(webapp2.RequestHandler):
     def get(self,name=None):
         # if no style defined, return all styles
         if name is None or name == '' or name == 'all':
-            self.error(400)
-            self.response.out.write('specify brewer.')      
+            resp='<?xml version="1.0"?><brewers>'
+            recipes_query = SBRecipe.all()
+            brewers = unique_result(recipes_query, 'brewer')
+            for brewer in brewers:
+                resp+= "<brewer>" + cgi.escape(brewer) + "</brewer>"                
+            resp+='</brewers>\n'
+            self.response.headers['Content-Type'] = 'application/xml'   
+            self.response.write(resp)
             return  
         
         else:
