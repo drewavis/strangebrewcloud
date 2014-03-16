@@ -117,7 +117,7 @@ class RecipeHandler(webapp2.RequestHandler):
         
         # is it good?
         try: 
-            xmldoc = minidom.parseString(xmltxt.encode('ISO-8859-1'))  
+            xmldoc = minidom.parseString(xmltxt.decode('unicode_escape').encode('ISO-8859-1'))  
         except:
             self.error(400)
             self.response.out.write('WTF? That is some bad xml, Poncho. \nPlease try again.')      
@@ -130,7 +130,7 @@ class RecipeHandler(webapp2.RequestHandler):
         
         # create new recipe object
         recipe = SBRecipe()
-        recipe.xml = xmltxt;
+        recipe.xml = xmltxt.decode('unicode_escape');
         recipe.version = xmldoc.getElementsByTagName('STRANGEBREWRECIPE')[0].attributes['version'].value
         recipe.brewer = xmldoc.getElementsByTagName('BREWER')[0].firstChild.data.strip()
         recipe.name = xmldoc.getElementsByTagName('NAME')[0].firstChild.data.strip()
