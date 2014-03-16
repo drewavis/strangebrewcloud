@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block navigation %}
+<p>Show only:</p>
+<ul>
+	{% if user %}
+	<li><a href="/style/mine">My Recipes</a></li>
+	{% endif %}
+	<li><a href="/">All Recipes</a></li>
+	{% for st in styles %}
+	<li><a href="/style/{{ st.style|escape }}">{{ st.style|escape }}:{{ st.count }}</a></li>
+	{% endfor %}
+</ul>
+{% endblock %}
+
+{% block content %}
+
+ 
+ {% if user %} <form enctype="multipart/form-data"
+	action="/upload" method="post" class="yform">
+	<fieldset>
+	   <legend>Add a recipe file:</legend>
+	   <p>
+		  <label>File</label>
+		  <input type="file" name="xmlfile" />
+	   </p>
+
+	   <input type="submit" value="Upload" />
+	</fieldset>
+ </form> {% endif %} 
+ <p> {{ errors }} </p>
+ 
+ <table class="full">
+	<caption>{% if filter %} {{ filter }} {% else %} All
+	recipes {% endif %}</caption>
+	<tr>
+	   <th>Name</th>
+	   <th>Style</th>
+	   <th>Submitter</th>
+	   <th>Brewer</th>
+	   <th>Comments</th>
+	   <th>Version</th>
+	</tr> {% for recipe in recipes %} <tr>
+	   <td>
+		  <a href="/show/{{ recipe.name|escape }}">{{ recipe.name|escape }}</a>
+	   </td>
+	   <td>{{ recipe.style|escape }}</td>
+	   <td>{{ recipe.author|escape }}</td>
+	   <td>{{ recipe.brewer|escape }}</td>
+	   <td>{{ recipe.comments|escape|truncatewords:10 }}</td>
+	   <td>{{ recipe.version|escape }}</td>
+	</tr> {% endfor %} </table>
+ {% endblock %}
