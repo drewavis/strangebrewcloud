@@ -57,8 +57,14 @@ class BrewerHandler(webapp2.RequestHandler):
     def get(self,name=None):
         # if no style defined, return all styles
         if name is None or name == '' or name == 'all':
-            self.error(400)
-            self.response.out.write('specify brewer.')      
+            resp='<?xml version="1.0"?><brewers>'
+            recipes_query = SBRecipe.all()
+            brewers = unique_result(recipes_query, 'brewer')
+            for brewer in brewers:
+                resp+= "<brewer>" + cgi.escape(brewer) + "</brewer>"                
+            resp+='</brewers>\n'
+            self.response.headers['Content-Type'] = 'application/xml'   
+            self.response.write(resp)
             return  
         
         else:
@@ -111,7 +117,7 @@ class RecipeHandler(webapp2.RequestHandler):
         
         # is it good?
         try: 
-            xmldoc = minidom.parseString(xmltxt.encode('ISO-8859-1'))  
+            xmldoc = minidom.parseString(xmltxt.decode('unicode_escape').encode('ISO-8859-1'))  
         except:
             self.error(400)
             self.response.out.write('WTF? That is some bad xml, Poncho. \nPlease try again.')      
@@ -124,7 +130,7 @@ class RecipeHandler(webapp2.RequestHandler):
         
         # create new recipe object
         recipe = SBRecipe()
-        recipe.xml = xmltxt;
+        recipe.xml = xmltxt.decode('unicode_escape');
         recipe.version = xmldoc.getElementsByTagName('STRANGEBREWRECIPE')[0].attributes['version'].value
         recipe.brewer = xmldoc.getElementsByTagName('BREWER')[0].firstChild.data.strip()
         recipe.name = xmldoc.getElementsByTagName('NAME')[0].firstChild.data.strip()

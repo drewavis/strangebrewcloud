@@ -5,5 +5,9 @@ api_version: 1
 threadsafe: true
 
 handlers:
+- url: /html
+  static_dir: html
+
 - url: /.*
   script: server.app
+
